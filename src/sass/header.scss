@@ -1,0 +1,30 @@
+header {
+  padding: 2rem;
+
+  #dollar-input-layout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 800;
+    font-size: 2rem;
+
+    #label {
+      margin-top: 2px;
+    }
+
+    input {
+      font-weight: 800;
+      font-size: 2rem;
+      border: unset;
+      border-bottom: 1px solid rgb(118, 118, 118);
+    }
+
+    input:focus {
+      outline: unset;
+    }
+  }
+
+  #chart-select {
+    float: right;
+  }
+}
