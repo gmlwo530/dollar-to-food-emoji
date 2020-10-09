@@ -1,7 +1,6 @@
 import React from "react";
 
 import { useMainContext, ChartType } from "../context/MainContext";
-
 import "../sass/header.scss";
 
 export const Header: React.FC = () => {

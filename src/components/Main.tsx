@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { BarChart } from "./BarChart";
-import { TextChart } from "./TextChart";
 
+import BarChart from "./BarChart";
+import TextChart from "./TextChart";
 import { useMainContext, ChartType } from "../context/MainContext";
-
 import "../sass/main.scss";
 
 interface MainSize {

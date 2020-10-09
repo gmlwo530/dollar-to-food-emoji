@@ -1,9 +1,10 @@
 import React from "react";
-import { Text } from "@visx/text";
+
 import { foodEmojis, dollarToFoodEmoji } from "../data";
 import { useMainContext } from "../context/MainContext";
-
 import "../sass/text_chart.scss";
+
+import { Text } from "@visx/text";
 
 interface TextChartProps {
   parentWidth: number;
@@ -11,30 +12,24 @@ interface TextChartProps {
 }
 
 interface TextChartAttr {
-  columnCount: number;
   chartWidth: number;
   chartHeight: number;
 }
 
-export const TextChart: React.FC<TextChartProps> = ({
-  parentWidth,
-  parentHeight,
-}) => {
+const TextChart: React.FC<TextChartProps> = ({ parentWidth, parentHeight }) => {
   const { state } = useMainContext();
 
-  const getColumnCountAndWidth = (data: object[]): TextChartAttr => {
-    let columnCount = data.length > 25 ? 7 : data.length > 9 ? 5 : 3;
+  const columnCount =
+    foodEmojis.length > 25 ? 7 : foodEmojis.length > 9 ? 5 : 3;
 
+  const getColumnCountAndWidth = (): TextChartAttr => {
     return {
-      columnCount: columnCount,
       chartWidth: parentWidth / columnCount,
       chartHeight: parentHeight / columnCount,
     };
   };
 
-  const { columnCount, chartWidth, chartHeight } = getColumnCountAndWidth(
-    foodEmojis
-  );
+  const { chartWidth, chartHeight } = getColumnCountAndWidth();
 
   return (
     <div id="price-text-chart-layout" data-column-count={columnCount}>
@@ -45,8 +40,8 @@ export const TextChart: React.FC<TextChartProps> = ({
               {item.emoji}
             </span>
             <Text
-              width={chartWidth / 4}
-              x={(chartWidth * 3) / 8}
+              width={chartWidth / 6}
+              x={(chartWidth * 5) / 12}
               y={chartHeight / 2}
               style={{ fontWeight: 800 }}
               scaleToFit
@@ -59,3 +54,5 @@ export const TextChart: React.FC<TextChartProps> = ({
     </div>
   );
 };
+
+export default TextChart;
