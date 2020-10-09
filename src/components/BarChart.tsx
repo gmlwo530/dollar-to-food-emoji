@@ -1,42 +1,75 @@
 import React from "react";
+
+import { useMainContext } from "../context/MainContext";
+import { dollarToFoodEmoji, FoodEmoji } from "../data";
+import Gradients from "./Gradients";
+import "../sass/bar_chart.scss";
+
 import { Bar } from "@visx/shape";
 import { Group } from "@visx/group";
-import { dollarToFoodEmoji, FoodEmoji } from "../data";
-import {
-  GradientTealBlue,
-  GradientPinkRed,
-  GradientLightgreenGreen,
-} from "@visx/gradient";
 import { AxisLeft } from "@visx/axis";
-
 import { scaleBand, scaleLinear } from "@visx/scale";
+import { useTooltip, useTooltipInPortal, defaultStyles } from "@visx/tooltip";
+import { localPoint } from "@visx/event";
 
-import "../sass/bar_chart.scss";
-import { useMainContext } from "../context/MainContext";
-
-interface BarChartProps {
+type BarChartProps = {
   parentWidth: number;
   parentHeight: number;
-}
+};
+
+const marginTop = 20;
+const margin = { top: marginTop, right: 20, bottom: 20, left: 50 };
+const tooltipStyles = {
+  ...defaultStyles,
+  minWidth: 60,
+  backgroundColor: "rgba(0,0,0,0.9)",
+  color: "white",
+};
+
+let tooltipTimeout: number;
 
 function max<D>(arr: D[], fn: (d: D) => number) {
   return Math.max(...arr.map(fn));
 }
 
-export const BarChart: React.FC<BarChartProps> = ({
-  parentWidth,
-  parentHeight,
-}) => {
+const BarChart: React.FC<BarChartProps> = ({ parentWidth, parentHeight }) => {
   const { state } = useMainContext();
+
+  const {
+    tooltipData,
+    tooltipLeft,
+    tooltipTop,
+    tooltipOpen,
+    showTooltip,
+    hideTooltip,
+  } = useTooltip();
+
+  const { containerRef, TooltipInPortal } = useTooltipInPortal({
+    detectBounds: true,
+    scroll: false,
+  });
+
+  const handleMouseOver = (event: React.MouseEvent, datum: number) => {
+    const svgElement = (event.target as SVGElement).ownerSVGElement;
+    if (svgElement !== null) {
+      const coords = localPoint(svgElement, event);
+      if (coords !== null) {
+        showTooltip({
+          tooltipLeft: coords.x,
+          tooltipTop: coords.y,
+          tooltipData: datum,
+        });
+      }
+    }
+  };
 
   const width = parentWidth / 1.1;
   const height = parentHeight - 40;
-  const marginTop = 20;
-  const margin = { top: marginTop, right: 20, bottom: 20, left: 50 };
+
   const xMax = width - margin.left - margin.right;
   const yMax = height - margin.top - margin.bottom;
 
-  const background = "#612efb";
+  const background = "#000";
 
   const data = dollarToFoodEmoji(state.dollar);
   const getEmoji = (d: FoodEmoji) => d.emoji;
@@ -57,10 +90,7 @@ export const BarChart: React.FC<BarChartProps> = ({
 
   return width > 0 && height > 0 ? (
     <div id="price-bar-chart-layout">
-      <svg width={width} height={height}>
-        <GradientTealBlue id="lemon" />
-        <GradientLightgreenGreen id="banana" />
-        <GradientPinkRed id="apple" />
+      <svg ref={containerRef} width={width} height={height}>
         <rect
           x={0}
           y={0}
@@ -80,14 +110,25 @@ export const BarChart: React.FC<BarChartProps> = ({
             const barY = emojiScale(d.emoji);
 
             return (
-              <Bar
-                key={`bar-${letter}`}
-                x={barX}
-                y={barY}
-                width={barWidth}
-                height={barHeight}
-                fill={`url(#${letter})`}
-              />
+              <React.Fragment key={`bar-${letter}`}>
+                <Gradients id={letter} />
+                <Bar
+                  x={barX}
+                  y={barY}
+                  width={barWidth}
+                  height={barHeight}
+                  fill={`url(#${letter})`}
+                  onMouseOver={(e) => {
+                    if (tooltipTimeout) clearTimeout(tooltipTimeout);
+                    handleMouseOver(e, d.result);
+                  }}
+                  onMouseOut={() => {
+                    tooltipTimeout = window.setTimeout(() => {
+                      hideTooltip();
+                    }, 300);
+                  }}
+                />
+              </React.Fragment>
             );
           })}
           <AxisLeft
@@ -103,6 +144,19 @@ export const BarChart: React.FC<BarChartProps> = ({
           />
         </Group>
       </svg>
+
+      {tooltipOpen && (
+        <TooltipInPortal
+          key={Math.random()}
+          top={tooltipTop}
+          left={tooltipLeft}
+          style={tooltipStyles}
+        >
+          Result : <strong>{tooltipData}</strong>
+        </TooltipInPortal>
+      )}
     </div>
   ) : null;
 };
+
+export default BarChart;
