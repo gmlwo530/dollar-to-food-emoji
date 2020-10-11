@@ -5,10 +5,6 @@ import * as serviceWorker from "./serviceWorker";
 
 import "./sass/base.scss";
 
-import ReactGA from "react-ga";
-
-ReactGA.initialize(process.env.REACT_APP_GA_ID as string);
-
 (window as { [key: string]: any })[
   `ga-disable-${process.env.REACT_APP_GA_ID}`
 ] = process.env.REACT_APP_MODE !== "prod";
