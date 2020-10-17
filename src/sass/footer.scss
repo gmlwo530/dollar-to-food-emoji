@@ -1,14 +1,21 @@
 footer {
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   padding: 2rem;
 
-  .copyright {
+  .copyright,
+  .links {
     color: #a3a3a3;
     font-size: 0.8125rem;
 
     a:visited {
       color: #a3a3a3;
     }
+  }
+
+  .links {
+    font-size: 1rem;
   }
 }
