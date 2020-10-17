@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 import BarChart from "./BarChart";
 import TextChart from "./TextChart";
+import Radar from "./Radar";
 import { useMainContext, ChartType } from "../context/MainContext";
 import "../sass/main.scss";
 
@@ -30,6 +31,10 @@ export const Main: React.FC = () => {
             parentWidth={mainSize.width}
             parentHeight={mainSize.height}
           />
+        );
+      case ChartType.Radar:
+        return (
+          <Radar parentWidth={mainSize.width} parentHeight={mainSize.height} />
         );
       default:
         return (

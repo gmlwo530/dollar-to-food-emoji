@@ -8,6 +8,7 @@ interface MainContextAPI {
 export enum ChartType {
   Text = 0,
   Bar,
+  Radar
 }
 
 export type MainContextAction =

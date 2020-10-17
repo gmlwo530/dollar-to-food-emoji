@@ -41,6 +41,7 @@ export const Header: React.FC = () => {
       >
         <option value={ChartType.Text}>Text Chart</option>
         <option value={ChartType.Bar}>Bar Chart</option>
+        <option value={ChartType.Radar}>Radar</option>
       </select>
     </header>
   );
